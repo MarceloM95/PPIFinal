@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Selecione um Usuário</title>
+</head>
+<body>
+  <h1>Usuário Atual: <%= currentUser.username %></h1>
+  <p>Selecione um usuário para iniciar o chat:</p>
+
+  <form action="/iniciar-chat" method="post">
+    <select name="targetUser" required>
+      <% availableUsers.forEach(user => { %>
+        <option value="<%= user.username %>"><%= user.username %></option>
+      <% }); %>
+    </select>
+    <button type="submit">Iniciar Chat</button>
+  </form>
+</body>
+</html>

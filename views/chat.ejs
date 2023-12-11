@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat</title>
+</head>
+<body>
+  <h1>Bem-vindo ao Chat!</h1>
+
+  <form onsubmit="event.preventDefault(); enviarMensagem();">
+    <label for="mensagem">Mensagem:</label>
+    <input type="text" id="mensagem" name="mensagem" required>
+    <br>
+    <button type="submit">Enviar</button>
+  </form>
+
+  <div id="messages-container"></div>
+
+  <p>
+    <a href="/lista-usuarios">Ver Lista de Usuários</a> |
+    <a href="/">Voltar para Menu Principal</a>
+  </p>
+
+  <script>
+    function displayMessages(messages) {
+      const messagesContainer = document.getElementById('messages-container');
+      messagesContainer.innerHTML = messages.map(message => `<p>${message}</p>`).join('');
+    }
+
+    function enviarMensagem() {
+      const mensagemInput = document.getElementById('mensagem');
+      const mensagem = mensagemInput.value;
+
+      if (mensagem.trim() !== '') {
+        fetch('/enviar-mensagem', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: `mensagem=${encodeURIComponent(mensagem)}`,
+        })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Erro ao enviar mensagem');
+          }
+
+          updateMessages();
+          mensagemInput.value = ''; 
+        })
+        .catch(error => console.error('Erro ao enviar mensagem:', error));
+      }
+    }
+
+    function updateMessages() {
+      fetch('/obter-mensagens')
+        .then(response => response.json())
+        .then(messages => displayMessages(messages))
+        .catch(error => console.error('Erro ao obter mensagens:', error));
+    }
+
+    updateMessages();
+    setInterval(updateMessages, 1000);
+  </script>
+</body>
+</html>
